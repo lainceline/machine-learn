@@ -1,9 +1,12 @@
 # app.py
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import joblib
 import pandas as pd
 
 app = Flask(__name__)
+CORS(app)  # This will enable CORS for all routes
+
 model = joblib.load('model.joblib')
 
 @app.route('/')
