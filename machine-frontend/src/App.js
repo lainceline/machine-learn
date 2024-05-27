@@ -11,15 +11,29 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await axios.post('http://127.0.0.1:5000/predict', JSON.parse(data));
-    setPrediction(response.data);
+    try {
+      const response = await axios.post('http://127.0.0.1:5000/predict', JSON.parse(data), {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      setPrediction(response.data);
+    } catch (error) {
+      console.error('There was an error making the prediction request!', error);
+    }
   };
 
   return (
     <div>
       <h1>ML Model Prediction</h1>
       <form onSubmit={handleSubmit}>
-        <textarea value={data} onChange={handleChange} rows="10" cols="50" placeholder='Enter JSON data'></textarea>
+        <textarea
+          value={data}
+          onChange={handleChange}
+          rows="10"
+          cols="50"
+          placeholder='Enter JSON data'
+        ></textarea>
         <br />
         <button type="submit">Predict</button>
       </form>
