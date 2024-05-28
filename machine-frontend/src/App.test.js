@@ -1,11 +1,14 @@
-// src/App.test.js
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import axios from 'axios';
 import App from './App';
 
+// Mock axios
 jest.mock('axios');
+
+// Cleanup after each test
+afterEach(cleanup);
 
 test('renders the title', () => {
   render(<App />);
@@ -27,7 +30,7 @@ test('handles input and submission', async () => {
   const prediction = await screen.findByText(/Prediction:/i);
   expect(prediction).toBeInTheDocument();
 
-  // Remove whitespace characters and newlines from the received text content
-  const receivedText = prediction.nextSibling.textContent.replace(/\s+/g, '');
-  expect(receivedText).toContain('[0,1,2]');
+  // Deserialize the JSON response and compare directly
+  const predictionData = JSON.parse(prediction.nextSibling.textContent);
+  expect(predictionData).toEqual([0, 1, 2]);
 });

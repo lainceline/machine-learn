@@ -1,12 +1,12 @@
-# app.py
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import joblib
 import pandas as pd
 
 app = Flask(__name__)
-CORS(app)  # This will enable CORS for all routes
+CORS(app)  # Enable CORS for all routes
 
+# Load the trained model
 model = joblib.load('model.joblib')
 
 @app.route('/')
@@ -15,10 +15,20 @@ def home():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    data = request.json
-    df = pd.DataFrame(data)
-    predictions = model.predict(df)
-    return jsonify(predictions.tolist())
+    try:
+        # Get the input JSON data
+        data = request.get_json()
+
+        # Convert the JSON data to a DataFrame
+        df = pd.DataFrame(data)
+
+        # Perform prediction using the loaded model
+        predictions = model.predict(df)
+
+        # Return the predictions as a JSON response
+        return jsonify(predictions.tolist())
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
 if __name__ == '__main__':
     app.run(debug=True)
